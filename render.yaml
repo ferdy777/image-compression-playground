@@ -1,0 +1,30 @@
+services:
+  - type: web
+    runtime: static
+    name: image-compression-playground
+    buildCommand: yarn && yarn build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: VITE_METRICS_URL
+        sync: false
+      - key: VITE_METRICS_SAMPLE
+        value: 1
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+  - type: web
+    runtime: node
+    name: image-metrics-collector
+    rootDir: collector
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: ALLOWED_ORIGIN
+        sync: false
+      - key: SUMMARY_KEY
+        generateValue: true
